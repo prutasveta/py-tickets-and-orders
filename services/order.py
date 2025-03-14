@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import QuerySet
@@ -16,14 +16,16 @@ def create_order(
     user = get_user_model().objects.get(username=username)
 
     if date is not None:
-        created_at = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M")
+        created_at = timezone.datetime.strptime(date, "%Y-%m-%d %H:%M")
+
     else:
-        created_at = datetime.datetime.now()
+        created_at = timezone.now()
 
     order = Order.objects.create(
-        user=user,
-        created_at=created_at
+        user=user
     )
+    order.created_at = created_at
+
     order.save()
 
     for ticket in tickets:
